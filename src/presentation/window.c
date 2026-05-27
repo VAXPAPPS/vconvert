@@ -42,9 +42,10 @@ static void on_drag_data_received(GtkWidget *widget, GdkDragContext *context,
 
                 // Format selection
                 GtkWidget *combo = gtk_combo_box_text_new();
-                gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(combo), "JPG");
-                gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(combo), "PNG");
-                gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(combo), "WEBP");
+                const gchar *formats[] = {"JPG", "PNG", "WEBP", "BMP", "TIFF", "GIF", "ICO", "TGA", "HEIC", NULL};
+                for (int j = 0; formats[j] != NULL; j++) {
+                    gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(combo), formats[j]);
+                }
                 gtk_combo_box_set_active(GTK_COMBO_BOX(combo), 0);
                 gtk_widget_set_valign(combo, GTK_ALIGN_CENTER);
 

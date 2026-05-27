@@ -1,4 +1,4 @@
-project('vconvert', 'c', version: '1.0.0', default_options: ['warning_level=2'])
+project('vconvert', 'c', version: '0.1.0', default_options: ['warning_level=2'])
 
 gtk_dep = dependency('gtk+-3.0')
 gio_dep = dependency('gio-2.0')
