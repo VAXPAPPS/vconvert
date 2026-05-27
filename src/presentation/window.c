@@ -42,7 +42,7 @@ static void on_drag_data_received(GtkWidget *widget, GdkDragContext *context,
 
                 // Format selection
                 GtkWidget *combo = gtk_combo_box_text_new();
-                const gchar *formats[] = {"JPG", "PNG", "WEBP", "BMP", "TIFF", "GIF", "ICO", "TGA", "HEIC", NULL};
+                const gchar *formats[] = {"JPG", "PNG", "WEBP", "BMP", "TIFF", "GIF", "ICO", "TGA", "HEIC", "SVG", "PDF", "EPS", "AVIF", "HDR", NULL};
                 for (int j = 0; formats[j] != NULL; j++) {
                     gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(combo), formats[j]);
                 }
