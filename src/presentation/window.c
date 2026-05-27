@@ -55,15 +55,22 @@ static void on_drag_data_received(GtkWidget *widget, GdkDragContext *context,
                 const gchar *video_formats[] = {"MP4", "MKV", "AVI", "WEBM", "MOV", "FLV", "GIF", NULL};
                 const gchar *audio_formats[] = {"MP3", "WAV", "FLAC", "OGG", "AAC", "M4A", NULL};
                 
-                const gchar **formats_to_use = image_formats; // default
                 if (input_type == MEDIA_TYPE_VIDEO) {
-                    formats_to_use = video_formats;
+                    for (int j = 0; video_formats[j] != NULL; j++) {
+                        gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(combo), video_formats[j]);
+                    }
+                    // إضافة صيغ الصوت للفيديو ليتمكن المستخدم من استخراج الصوت
+                    for (int j = 0; audio_formats[j] != NULL; j++) {
+                        gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(combo), audio_formats[j]);
+                    }
                 } else if (input_type == MEDIA_TYPE_AUDIO) {
-                    formats_to_use = audio_formats;
-                }
-                
-                for (int j = 0; formats_to_use[j] != NULL; j++) {
-                    gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(combo), formats_to_use[j]);
+                    for (int j = 0; audio_formats[j] != NULL; j++) {
+                        gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(combo), audio_formats[j]);
+                    }
+                } else {
+                    for (int j = 0; image_formats[j] != NULL; j++) {
+                        gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(combo), image_formats[j]);
+                    }
                 }
                 gtk_combo_box_set_active(GTK_COMBO_BOX(combo), 0);
                 gtk_widget_set_valign(combo, GTK_ALIGN_CENTER);
