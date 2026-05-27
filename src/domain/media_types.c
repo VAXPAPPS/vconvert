@@ -22,7 +22,8 @@ MediaType get_media_type_from_format(const gchar *format) {
         type = MEDIA_TYPE_VIDEO;
     }
     else if (g_strcmp0(fmt, "mp3") == 0 || g_strcmp0(fmt, "wav") == 0 ||
-             g_strcmp0(fmt, "flac") == 0 || g_strcmp0(fmt, "ogg") == 0) {
+             g_strcmp0(fmt, "flac") == 0 || g_strcmp0(fmt, "ogg") == 0 ||
+             g_strcmp0(fmt, "aac") == 0 || g_strcmp0(fmt, "m4a") == 0) {
         type = MEDIA_TYPE_AUDIO;
     }
     

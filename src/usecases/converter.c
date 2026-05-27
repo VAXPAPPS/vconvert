@@ -2,6 +2,7 @@
 #include "../domain/media_types.h"
 #include "../infrastructure/image_converter.h"
 #include "../infrastructure/video_converter.h"
+#include "../infrastructure/audio_converter.h"
 #include <stdio.h>
 
 void start_conversion(const gchar *input_path, const gchar *output_path, const gchar *format,
@@ -17,6 +18,8 @@ void start_conversion(const gchar *input_path, const gchar *output_path, const g
         convert_image_async(input_path, output_path, fin_cb, user_data);
     } else if (type == MEDIA_TYPE_VIDEO) {
         convert_video_async(input_path, output_path, prog_cb, fin_cb, user_data);
+    } else if (type == MEDIA_TYPE_AUDIO) {
+        convert_audio_async(input_path, output_path, prog_cb, fin_cb, user_data);
     } else {
         g_printerr("Unsupported format type for conversion: %s\n", format);
         if (fin_cb) fin_cb(FALSE, user_data);

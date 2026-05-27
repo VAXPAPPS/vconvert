@@ -17,6 +17,7 @@ src_files = [
     'src/presentation/window.c',
     'src/infrastructure/image_converter.c',
     'src/infrastructure/video_converter.c',
+    'src/infrastructure/audio_converter.c',
     resources
 ]
 
