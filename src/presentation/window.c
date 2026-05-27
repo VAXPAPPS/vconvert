@@ -141,11 +141,7 @@ static void on_conversion_finished(gboolean success, gpointer user_data) {
 
 static void on_convert_all_clicked(GtkButton *btn, gpointer user_data) {
     GList *children = gtk_container_get_children(GTK_CONTAINER(list_box));
-    
-    // For simplicity, we get the home directory and save to a folder there
     const gchar *home = g_get_home_dir();
-    gchar *output_dir = g_build_filename(home, "Videos", "VConvert", NULL);
-    g_mkdir_with_parents(output_dir, 0755);
 
     for (GList *iter = children; iter != NULL; iter = iter->next) {
         GtkWidget *row = GTK_WIDGET(iter->data);
@@ -155,6 +151,18 @@ static void on_convert_all_clicked(GtkButton *btn, gpointer user_data) {
         
         gchar *format = gtk_combo_box_text_get_active_text(GTK_COMBO_BOX_TEXT(combo));
         if (input_filename && format) {
+            // Determine output directory based on target format
+            MediaType out_type = get_media_type_from_format(format);
+            const gchar *folder_name = "Videos";
+            if (out_type == MEDIA_TYPE_IMAGE) {
+                folder_name = "Pictures";
+            } else if (out_type == MEDIA_TYPE_AUDIO) {
+                folder_name = "Music";
+            }
+            
+            gchar *output_dir = g_build_filename(home, folder_name, "VConvert", NULL);
+            g_mkdir_with_parents(output_dir, 0755);
+
             gtk_progress_bar_set_text(GTK_PROGRESS_BAR(progress), "جاري...");
             gtk_progress_bar_set_fraction(GTK_PROGRESS_BAR(progress), 0.1); // Small indicator that it started
             
@@ -171,11 +179,11 @@ static void on_convert_all_clicked(GtkButton *btn, gpointer user_data) {
             g_free(output_filename);
             g_free(name_no_ext);
             g_free(basename);
+            g_free(output_dir);
         }
         g_free(format);
     }
     g_list_free(children);
-    g_free(output_dir);
 }
 
 void show_main_window(GtkApplication *app) {
@@ -241,7 +249,7 @@ void show_main_window(GtkApplication *app) {
     gtk_style_context_add_class(bottom_ctx, "bottom-bar");
 
     GtkWidget *output_label = gtk_label_new("مجلد الإخراج:");
-    GtkWidget *output_btn = gtk_button_new_with_label("~/Videos/VConvert");
+    GtkWidget *output_btn = gtk_button_new_with_label("تلقائي (حسب النوع)");
     
     GtkWidget *convert_btn = gtk_button_new_with_label("تحويل الكل");
     GtkStyleContext *btn_ctx = gtk_widget_get_style_context(convert_btn);
