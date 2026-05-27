@@ -1,5 +1,6 @@
 #include "window.h"
-#include "../infrastructure/ffmpeg_core.h"
+#include "../usecases/converter.h"
+#include "../domain/media_types.h"
 
 static GtkWidget *list_box;
 
@@ -42,9 +43,24 @@ static void on_drag_data_received(GtkWidget *widget, GdkDragContext *context,
 
                 // Format selection
                 GtkWidget *combo = gtk_combo_box_text_new();
-                const gchar *formats[] = {"JPG", "PNG", "WEBP", "BMP", "TIFF", "GIF", "ICO", "TGA", "HEIC", "SVG", "PDF", "EPS", "AVIF", "HDR", NULL};
-                for (int j = 0; formats[j] != NULL; j++) {
-                    gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(combo), formats[j]);
+                
+                // Determine input type to filter formats
+                MediaType input_type = MEDIA_TYPE_UNKNOWN;
+                const gchar *ext = g_strrstr(filename, ".");
+                if (ext) {
+                    input_type = get_media_type_from_format(ext + 1);
+                }
+
+                const gchar *image_formats[] = {"JPG", "PNG", "WEBP", "BMP", "TIFF", "ICO", "TGA", "HEIC", "SVG", "PDF", "EPS", "AVIF", "HDR", NULL};
+                const gchar *video_formats[] = {"MP4", "MKV", "AVI", "WEBM", "MOV", "FLV", "GIF",NULL};
+                
+                const gchar **formats_to_use = image_formats; // default
+                if (input_type == MEDIA_TYPE_VIDEO) {
+                    formats_to_use = video_formats;
+                }
+                
+                for (int j = 0; formats_to_use[j] != NULL; j++) {
+                    gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(combo), formats_to_use[j]);
                 }
                 gtk_combo_box_set_active(GTK_COMBO_BOX(combo), 0);
                 gtk_widget_set_valign(combo, GTK_ALIGN_CENTER);
@@ -92,6 +108,15 @@ static void on_drag_data_received(GtkWidget *widget, GdkDragContext *context,
     }
 }
 
+static void on_conversion_progress(double fraction, gpointer user_data) {
+    GtkWidget *progress = GTK_WIDGET(user_data);
+    gtk_progress_bar_set_fraction(GTK_PROGRESS_BAR(progress), fraction);
+    
+    gchar *text = g_strdup_printf("%d%%", (int)(fraction * 100));
+    gtk_progress_bar_set_text(GTK_PROGRESS_BAR(progress), text);
+    g_free(text);
+}
+
 static void on_conversion_finished(gboolean success, gpointer user_data) {
     GtkWidget *progress = GTK_WIDGET(user_data);
     if (success) {
@@ -130,7 +155,7 @@ static void on_convert_all_clicked(GtkButton *btn, gpointer user_data) {
             gchar *new_basename = g_strdup_printf("%s.%s", name_no_ext, g_ascii_strdown(format, -1));
             gchar *output_filename = g_build_filename(output_dir, new_basename, NULL);
             
-            convert_media_async(input_filename, output_filename, on_conversion_finished, progress);
+            start_conversion(input_filename, output_filename, format, on_conversion_progress, on_conversion_finished, progress);
             
             g_free(new_basename);
             g_free(output_filename);

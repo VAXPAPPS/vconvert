@@ -1,4 +1,4 @@
-#include "ffmpeg_core.h"
+#include "image_converter.h"
 #include <gio/gio.h>
 #include <cairo.h>
 #include <cairo-pdf.h>
@@ -72,7 +72,7 @@ static gboolean convert_with_cairo(const gchar *input, const gchar *output, cons
     return FALSE;
 }
 
-void convert_media_async(const gchar *input_path, const gchar *output_path,
+void convert_image_async(const gchar *input_path, const gchar *output_path,
                          ConversionFinishedCallback finished_cb,
                          gpointer user_data) {
     GError *error = NULL;

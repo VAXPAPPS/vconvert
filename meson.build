@@ -12,8 +12,11 @@ resources = gnome.compile_resources(
 
 src_files = [
     'src/main.c',
+    'src/domain/media_types.c',
+    'src/usecases/converter.c',
     'src/presentation/window.c',
-    'src/infrastructure/ffmpeg_core.c',
+    'src/infrastructure/image_converter.c',
+    'src/infrastructure/video_converter.c',
     resources
 ]
 
