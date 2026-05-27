@@ -1,0 +1,10 @@
+Package: vconvert
+Version: 0.1.0
+Section: video
+Priority: optional
+Architecture: amd64
+Maintainer: Vaxp Developer <admin@vaxp.os>
+Description: Professional Media Converter for Vaxp OS
+ A clean, fast, and professional media converter built with C, GTK3, and FFmpeg.
+ Supports Image, Video, and Audio conversion with real-time progress tracking.
+Depends: libc6, libglib2.0-0, libgtk-3-0, ffmpeg, libcairo2, libgdk-pixbuf-2.0-0

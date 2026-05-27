@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=VConvert
+Comment=Professional Media Converter
+Exec=vconvert
+Icon=vconvert
+Terminal=false
+Type=Application
+Categories=AudioVideo;Utility;
