@@ -1,0 +1,100 @@
+/* VConvert Premium Styling - Dark Glassmorphism */
+
+window {
+    background-color: rgba(0, 0, 0, 0.299);
+    color: #cdd6f4;
+}
+
+headerbar {
+    background-color: rgba(0, 0, 0, 0.299);
+    border-bottom: 1px solid #313244;
+    color: #cdd6f4;
+    font-weight: bold;
+}
+
+/* Drag and Drop Zone */
+.drop-zone {
+    background-color: rgba(49, 50, 68, 0.5);
+    border: 2px dashed #6c7086;
+    border-radius: 16px;
+    padding: 40px;
+    margin: 32px;
+    transition: all 0.3s ease-in-out;
+}
+
+.drop-zone:hover {
+    background-color: rgba(69, 71, 90, 0.7);
+    border-color: #89b4fa;
+}
+
+.drop-zone-label {
+    font-size: 18px;
+    font-weight: bold;
+    color: #a6adc8;
+    margin-top: 16px;
+}
+
+.drop-zone-icon {
+    color: #89b4fa;
+}
+
+/* Bottom Actions */
+.bottom-bar {
+    background-color: rgba(0, 0, 0, 0.299);
+    padding: 16px;
+    border-top: 1px solid #313244;
+}
+
+.bottom-bar label {
+    font-weight: bold;
+    color: #bac2de;
+}
+
+.bottom-bar button {
+    background-color: rgba(0, 0, 0, 0.299);
+    color: #cdd6f4;
+    border: 1px solid #45475a;
+    border-radius: 8px;
+    padding: 8px 16px;
+    box-shadow: none;
+}
+
+.bottom-bar button:hover {
+    background-color: #45475a;
+    border-color: #585b70;
+}
+
+.convert-btn {
+    background-image: linear-gradient(to right, #89b4fa, #cba6f7);
+    color: #11111b;
+    font-weight: bold;
+    font-size: 16px;
+    border-radius: 8px;
+    padding: 8px 32px;
+    border: none;
+    text-shadow: none;
+    box-shadow: 0 4px 10px rgba(137, 180, 250, 0.3);
+    transition: all 0.2s ease-in-out;
+}
+
+.convert-btn:hover {
+    background-image: linear-gradient(to right, #b4befe, #f5c2e7);
+    box-shadow: 0 6px 14px rgba(203, 166, 247, 0.4);
+}
+
+/* Item Row */
+list row {
+    background: transparent;
+}
+list row:hover {
+    background: transparent;
+}
+
+.item-row {
+    background-color: #181825;
+    border-radius: 12px;
+    margin: 8px 16px;
+    padding: 12px 16px;
+    border: 1px solid #313244;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
