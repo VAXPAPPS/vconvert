@@ -52,3 +52,13 @@ chmod +x package.sh
 # To install it on Vaxp OS:
 sudo dpkg -i vconvert_0.1.0_amd64.deb
 ```
+
+---
+
+## 🗺️ Roadmap (Future Features)
+
+While **VConvert v1.0** is fully functional and production-ready, the following features are planned for future updates:
+
+- **[ ] Safe Cancellation:** Add the ability to gracefully cancel an ongoing conversion and safely kill the underlying `FFmpeg` subprocess without leaving zombie processes.
+- **[ ] System Notifications:** Integrate with `libnotify` to trigger a Vaxp OS desktop notification once a batch of conversions successfully finishes.
+- **[ ] Advanced Output Settings:** Provide an expandable settings menu to customize video resolution (e.g., 1080p, 720p) and audio bitrate/quality before starting the conversion.
