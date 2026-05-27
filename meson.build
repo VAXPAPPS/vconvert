@@ -15,6 +15,7 @@ src_files = [
     'src/domain/media_types.c',
     'src/usecases/converter.c',
     'src/presentation/window.c',
+    'src/presentation/theme_manager.c',
     'src/infrastructure/image_converter.c',
     'src/infrastructure/video_converter.c',
     'src/infrastructure/audio_converter.c',

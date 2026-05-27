@@ -1,8 +1,10 @@
 #include <gtk/gtk.h>
 #include "presentation/window.h"
+#include "presentation/theme_manager.h"
 
 static void on_activate(GtkApplication *app, gpointer user_data) {
     show_main_window(app);
+    theme_manager_init();
 }
 
 int main(int argc, char **argv) {
