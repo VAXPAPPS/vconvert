@@ -3,6 +3,17 @@
 #include "../domain/media_types.h"
 
 static GtkWidget *list_box;
+static GtkWidget *drop_zone;
+
+static void update_placeholder_visibility() {
+    GList *children = gtk_container_get_children(GTK_CONTAINER(list_box));
+    if (children == NULL) {
+        gtk_widget_show_all(drop_zone);
+    } else {
+        gtk_widget_hide(drop_zone);
+    }
+    if (children) g_list_free(children);
+}
 
 
 static void load_css() {
@@ -78,7 +89,7 @@ static void on_drag_data_received(GtkWidget *widget, GdkDragContext *context,
                 // Progress Bar
                 GtkWidget *progress = gtk_progress_bar_new();
                 gtk_progress_bar_set_show_text(GTK_PROGRESS_BAR(progress), TRUE);
-                gtk_progress_bar_set_text(GTK_PROGRESS_BAR(progress), "جاهز");
+                gtk_progress_bar_set_text(GTK_PROGRESS_BAR(progress), "Ready");
                 gtk_widget_set_valign(progress, GTK_ALIGN_CENTER);
                 gtk_widget_set_size_request(progress, 150, -1);
 
@@ -103,6 +114,7 @@ static void on_drag_data_received(GtkWidget *widget, GdkDragContext *context,
 
                 // Signal to remove row
                 g_signal_connect_swapped(remove_btn, "clicked", G_CALLBACK(gtk_widget_destroy), row);
+                g_signal_connect(row, "destroy", G_CALLBACK(update_placeholder_visibility), NULL);
 
 
                 gtk_list_box_insert(GTK_LIST_BOX(list_box), row, -1);
@@ -113,6 +125,8 @@ static void on_drag_data_received(GtkWidget *widget, GdkDragContext *context,
         }
         g_strfreev(uris);
         gtk_drag_finish(context, TRUE, FALSE, time);
+        
+        update_placeholder_visibility();
     } else {
         gtk_drag_finish(context, FALSE, FALSE, time);
     }
@@ -131,9 +145,9 @@ static void on_conversion_finished(gboolean success, gpointer user_data) {
     GtkWidget *progress = GTK_WIDGET(user_data);
     if (success) {
         gtk_progress_bar_set_fraction(GTK_PROGRESS_BAR(progress), 1.0);
-        gtk_progress_bar_set_text(GTK_PROGRESS_BAR(progress), "مكتمل!");
+        gtk_progress_bar_set_text(GTK_PROGRESS_BAR(progress), "Completed!");
     } else {
-        gtk_progress_bar_set_text(GTK_PROGRESS_BAR(progress), "خطأ!");
+        gtk_progress_bar_set_text(GTK_PROGRESS_BAR(progress), "Error!");
         // Reset fraction to 0 so it doesn't look done
         gtk_progress_bar_set_fraction(GTK_PROGRESS_BAR(progress), 0.0);
     }
@@ -163,7 +177,7 @@ static void on_convert_all_clicked(GtkButton *btn, gpointer user_data) {
             gchar *output_dir = g_build_filename(home, folder_name, "VConvert", NULL);
             g_mkdir_with_parents(output_dir, 0755);
 
-            gtk_progress_bar_set_text(GTK_PROGRESS_BAR(progress), "جاري...");
+            gtk_progress_bar_set_text(GTK_PROGRESS_BAR(progress), "Processing...");
             gtk_progress_bar_set_fraction(GTK_PROGRESS_BAR(progress), 0.1); // Small indicator that it started
             
             // Build new output filename based on selected format
@@ -203,7 +217,7 @@ void show_main_window(GtkApplication *app) {
     GtkWidget *header = gtk_header_bar_new();
     gtk_header_bar_set_show_close_button(GTK_HEADER_BAR(header), TRUE);
     gtk_header_bar_set_title(GTK_HEADER_BAR(header), "VConvert");
-    gtk_header_bar_set_subtitle(GTK_HEADER_BAR(header), "محول الوسائط");
+    gtk_header_bar_set_subtitle(GTK_HEADER_BAR(header), "Media Converter");
     gtk_window_set_titlebar(GTK_WINDOW(window), header);
 
     // Main Box
@@ -214,15 +228,21 @@ void show_main_window(GtkApplication *app) {
     GtkWidget *scrolled = gtk_scrolled_window_new(NULL, NULL);
     gtk_widget_set_hexpand(scrolled, TRUE);
     gtk_widget_set_vexpand(scrolled, TRUE);
-    gtk_box_pack_start(GTK_BOX(main_box), scrolled, TRUE, TRUE, 0);
 
     // List Box
     list_box = gtk_list_box_new();
     gtk_list_box_set_selection_mode(GTK_LIST_BOX(list_box), GTK_SELECTION_NONE);
     gtk_container_add(GTK_CONTAINER(scrolled), list_box);
 
+    // Overlay to hold the scrolled window and the placeholder
+    GtkWidget *overlay = gtk_overlay_new();
+    gtk_container_add(GTK_CONTAINER(overlay), scrolled);
+    gtk_widget_set_hexpand(overlay, TRUE);
+    gtk_widget_set_vexpand(overlay, TRUE);
+    gtk_box_pack_start(GTK_BOX(main_box), overlay, TRUE, TRUE, 0);
+
     // Drag and Drop Zone (Placeholder for empty list)
-    GtkWidget *drop_zone = gtk_box_new(GTK_ORIENTATION_VERTICAL, 12);
+    drop_zone = gtk_box_new(GTK_ORIENTATION_VERTICAL, 12);
     gtk_widget_set_valign(drop_zone, GTK_ALIGN_CENTER);
     gtk_widget_set_halign(drop_zone, GTK_ALIGN_CENTER);
     GtkStyleContext *drop_ctx = gtk_widget_get_style_context(drop_zone);
@@ -233,7 +253,7 @@ void show_main_window(GtkApplication *app) {
     GtkStyleContext *icon_ctx = gtk_widget_get_style_context(drop_icon);
     gtk_style_context_add_class(icon_ctx, "drop-zone-icon");
 
-    GtkWidget *drop_label = gtk_label_new("قم بسحب الملفات وإفلاتها هنا");
+    GtkWidget *drop_label = gtk_label_new("Drag and drop files here to convert\n(Supports Images, Videos, and Audio)");
     gtk_label_set_justify(GTK_LABEL(drop_label), GTK_JUSTIFY_CENTER);
     GtkStyleContext *label_ctx = gtk_widget_get_style_context(drop_label);
     gtk_style_context_add_class(label_ctx, "drop-zone-label");
@@ -241,17 +261,17 @@ void show_main_window(GtkApplication *app) {
     gtk_box_pack_start(GTK_BOX(drop_zone), drop_icon, FALSE, FALSE, 0);
     gtk_box_pack_start(GTK_BOX(drop_zone), drop_label, FALSE, FALSE, 0);
 
-    gtk_list_box_set_placeholder(GTK_LIST_BOX(list_box), drop_zone);
+    gtk_overlay_add_overlay(GTK_OVERLAY(overlay), drop_zone);
 
     // Bottom Bar
     GtkWidget *bottom_bar = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 12);
     GtkStyleContext *bottom_ctx = gtk_widget_get_style_context(bottom_bar);
     gtk_style_context_add_class(bottom_ctx, "bottom-bar");
 
-    GtkWidget *output_label = gtk_label_new("مجلد الإخراج:");
-    GtkWidget *output_btn = gtk_button_new_with_label("تلقائي (حسب النوع)");
+    GtkWidget *output_label = gtk_label_new("Output Folder:");
+    GtkWidget *output_btn = gtk_button_new_with_label("Auto (by type)");
     
-    GtkWidget *convert_btn = gtk_button_new_with_label("تحويل الكل");
+    GtkWidget *convert_btn = gtk_button_new_with_label("Convert All");
     GtkStyleContext *btn_ctx = gtk_widget_get_style_context(convert_btn);
     gtk_style_context_add_class(btn_ctx, "convert-btn");
     
